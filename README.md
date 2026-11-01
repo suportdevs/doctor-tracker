@@ -31,7 +31,9 @@
 | **Doctor detail** | The doctor's profile plus **their patients**, with search, filters and pagination. You can **add patients under the doctor** and **remove patients from the doctor's list**. |
 | **Patients** | A dedicated page listing every patient. Edit and delete patients. Search by name, phone, email or diagnosis. Filter by **visit-date range**, **condition**, gender, age group and doctor. Sort and paginate. |
 | **Dashboard** | Total doctors, total patients, visits in the selected range with growth vs the previous period, critical patients, **patient visits over time** (7d / 30d / 90d / 12m), **patients per doctor**, patients by specialty, condition mix, age and gender breakdowns, and recent visits. |
-| **UX** | Clean indigo design, responsive at every size (tables become cards on phones, filters fold behind a toggle), filters kept in the URL (shareable, survive refresh), debounced search, skeleton loaders, toasts, confirm dialogs and inline validation errors. |
+| **App bar search** | A search box in the top bar finds doctors and patients as you type, in grouped results (↑/↓ to move, Enter to open, Ctrl/⌘ + K to focus). It reuses the normal list endpoints, so permissions and indexes apply as usual. |
+| **Organized filters** | Every list has the same toolbar: search, a **Filters** panel with labelled fields, a sort control, and a removable chip for each active filter (plus "Clear all"). |
+| **UX** | Modern, minimal design: flat cards, an icon in every input, short two-column forms. Responsive at every size (tables become cards on phones), filters kept in the URL (shareable, survive refresh), debounced search, skeleton loaders, toasts, confirm dialogs and inline validation errors. |
 
 ### Demo account
 
@@ -287,10 +289,10 @@ doctor-tracker/
         │   ├── admin/(panel)/       dashboard, doctors, doctors/[id], patients, profile
         │   └── layout.js, page.js (→ /admin), globals.css, robots.js, not-found.js
         ├── components/
-        │   ├── ui/                  Badge, Modal, Pagination, Select, StatCard… (one file each)
-        │   ├── layout/              AdminShell (sidebar + header)
+        │   ├── ui/                  Badge, Input, Modal, Pagination, Select, StatCard… (one file each)
+        │   ├── layout/              AdminShell (sidebar + header), GlobalSearch (app bar search)
         │   ├── auth/                RequirePermission, AuthLayout
-        │   ├── common/              FilterBar (+ DateRange)
+        │   ├── common/              FilterBar (+ FilterField, DateRange)
         │   ├── dashboard/           Charts (Recharts), TopDoctors (patients-per-doctor ranking)
         │   ├── doctors/             DoctorForm
         │   └── patients/            PatientForm, PatientsTable

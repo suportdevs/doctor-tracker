@@ -10,6 +10,7 @@ import { ROLE_LABELS } from '@/constants';
 import { useAuth } from '@/context/AuthContext';
 import { cn } from '@/lib/utils';
 import GlobalSearch from './GlobalSearch';
+import UserMenu from './UserMenu';
 
 const THEME_KEY = 'dt_theme';
 
@@ -92,7 +93,6 @@ function Sidebar({ onNavigate }) {
 }
 
 export default function Shell({ children }) {
-  const { user } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dark, toggleDark] = useDarkMode();
 
@@ -121,7 +121,7 @@ export default function Shell({ children }) {
           <button type="button" onClick={toggleDark} className="a-btn-ghost a-btn-icon" aria-label="Toggle dark mode">
             {dark ? <Sun className="h-[18px] w-[18px]" /> : <Moon className="h-[18px] w-[18px]" />}
           </button>
-          <Avatar name={user?.name} size={32} className="hidden sm:grid lg:hidden" />
+          <UserMenu />
         </header>
         <main className="mx-auto max-w-[1400px] p-4 sm:p-6 lg:p-8">{children}</main>
       </div>
