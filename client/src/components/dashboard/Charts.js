@@ -5,12 +5,10 @@ import {
   Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from 'recharts';
 import { CONDITIONS } from '@/constants';
-import { useAuth } from '@/context/AuthContext';
-import { accentHex } from '@/lib/adminTheme';
 import { formatDate, formatNumber } from '@/lib/utils';
 
-// Recessive axes and grid so the data stands out; one hue per single-series chart: the user's accent colour.
-const useSeries = () => accentHex(useAuth().preferences.accent, 600);
+// Recessive axes and grid so the data stands out; one hue (the indigo brand colour) per single-series chart.
+const SERIES = '#4f46e5';
 const AXIS = { fontSize: 12, fill: '#94a3b8' };
 const GRID = 'rgba(148,163,184,0.18)';
 const CURSOR = { fill: 'rgba(148,163,184,0.08)' };
@@ -39,7 +37,6 @@ const TREND_FORMAT = {
 };
 
 export const TrendChart = memo(function TrendChart({ data, unit }) {
-  const SERIES = useSeries();
   const fmt = (v) => formatDate(v, { ...TREND_FORMAT[unit], timeZone: 'UTC' });
   return (
     <ResponsiveContainer width="100%" height={290}>
@@ -65,7 +62,6 @@ export const TrendChart = memo(function TrendChart({ data, unit }) {
 
 // Horizontal bars: twelve specialty names stay readable and the ranking reads top-down.
 export const SpecializationChart = memo(function SpecializationChart({ data }) {
-  const SERIES = useSeries();
   return (
     <ResponsiveContainer width="100%" height={Math.max(240, data.length * 30)}>
       <BarChart data={data} layout="vertical" margin={{ top: 0, right: 16, left: 0, bottom: 0 }} barCategoryGap={7}>
@@ -96,7 +92,7 @@ export const ConditionChart = memo(function ConditionChart({ data }) {
         </ResponsiveContainer>
         <div className="pointer-events-none absolute inset-0 grid place-items-center text-center">
           <div>
-            <p className="font-heading text-[1.7rem] font-bold leading-none text-ink-950 dark:text-white">{formatNumber(total)}</p>
+            <p className="text-[1.7rem] font-semibold leading-none text-ink-950 dark:text-white">{formatNumber(total)}</p>
             <p className="mt-1 text-xs text-ink-400">patients</p>
           </div>
         </div>
@@ -116,7 +112,6 @@ export const ConditionChart = memo(function ConditionChart({ data }) {
 });
 
 export const AgeChart = memo(function AgeChart({ data }) {
-  const SERIES = useSeries();
   return (
     <ResponsiveContainer width="100%" height={200}>
       <BarChart data={data} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>

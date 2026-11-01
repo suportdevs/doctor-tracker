@@ -3,9 +3,9 @@
 import { memo, Suspense, useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { toast } from 'sonner';
-import { Building2, LayoutGrid, List, Mail, Pencil, Phone, Plus, Stethoscope, Trash2, Users } from 'lucide-react';
+import { Activity, ArrowUpDown, Building2, LayoutGrid, List, Mail, Pencil, Phone, Plus, Stethoscope, Trash2, Users } from 'lucide-react';
 import DoctorForm from '@/components/doctors/DoctorForm';
-import FilterBar, { DateRange } from '@/components/common/FilterBar';
+import FilterBar, { DateRange, FilterField, dateRangeLabel } from '@/components/common/FilterBar';
 import RequirePermission from '@/components/auth/RequirePermission';
 import { Avatar, Badge, ConfirmDialog, EmptyState, PageHeader, Pagination, Select, TableSkeleton } from '@/components/ui';
 import { api } from '@/services/api';
@@ -15,6 +15,7 @@ import { cn, formatDate } from '@/lib/utils';
 
 const DEFAULTS = { q: '', specialization: '', hospital: '', status: '', from: '', to: '', sort: 'newest', page: 1, limit: 10 };
 
+const STATUS_OPTIONS = [['active', 'Active'], ['inactive', 'Inactive']];
 const StatusBadge = ({ status }) => <Badge color={status === 'active' ? 'green' : 'gray'} dot>{status === 'active' ? 'Active' : 'Inactive'}</Badge>;
 
 // Table or grid — remembered per browser (a display preference, not a filter).
@@ -94,7 +95,7 @@ function DoctorCard({ doctor, onEdit, onDelete }) {
 // Grid view: a profile card with the doctor's photo.
 const DoctorTile = memo(function DoctorTile({ doctor, onEdit, onDelete }) {
   return (
-    <div className="group relative overflow-hidden rounded-2xl border border-ink-200/60 bg-white transition hover:-translate-y-0.5 hover:shadow-lift dark:border-white/[.06] dark:bg-ink-900">
+    <div className="group relative overflow-hidden rounded-xl border border-ink-200/70 bg-white transition hover:border-ink-300 dark:border-white/[.07] dark:bg-ink-900">
       <Link href={`/admin/doctors/${doctor._id}`} className="block">
         <div className="relative aspect-[4/3] overflow-hidden bg-brand-50 dark:bg-white/5">
           {doctor.photo
@@ -103,7 +104,7 @@ const DoctorTile = memo(function DoctorTile({ doctor, onEdit, onDelete }) {
           <div className="absolute left-3 top-3"><StatusBadge status={doctor.status} /></div>
         </div>
         <div className="p-4">
-          <p className="truncate font-heading text-[15px] font-semibold text-ink-950 dark:text-white">{doctor.name}</p>
+          <p className="truncate text-sm font-semibold text-ink-950 dark:text-white">{doctor.name}</p>
           <p className="text-xs font-medium text-brand-700 dark:text-brand-300">{doctor.specialization}</p>
           <p className="mt-2 flex items-center gap-1.5 truncate text-xs text-ink-500"><Building2 className="h-3.5 w-3.5 shrink-0" />{doctor.hospital}</p>
         </div>
@@ -132,7 +133,14 @@ function DoctorsList() {
   const onEdit = useCallback((doctor) => setEditing(doctor), []);
   const onDelete = useCallback((doctor) => setDeleting(doctor), []);
 
-  const activeFilters = ['q', 'specialization', 'hospital', 'status', 'from', 'to'].filter((k) => filters[k]).length;
+  // One removable chip per active filter (the search box shows the search text itself).
+  const chips = [
+    filters.specialization && { label: filters.specialization, onRemove: () => setFilters({ specialization: '' }) },
+    filters.hospital && { label: filters.hospital, onRemove: () => setFilters({ hospital: '' }) },
+    filters.status && { label: filters.status === 'active' ? 'Active' : 'Inactive', onRemove: () => setFilters({ status: '' }) },
+    (filters.from || filters.to) && { label: dateRangeLabel('Joined', filters.from, filters.to), onRemove: () => setFilters({ from: '', to: '' }) },
+  ].filter(Boolean);
+  const activeFilters = chips.length + (filters.q ? 1 : 0);
 
   const confirmDelete = async () => {
     setBusy(true);
@@ -152,7 +160,7 @@ function DoctorsList() {
   const items = data?.items || [];
   const viewButton = (mode, Icon, label) => (
     <button type="button" onClick={() => setView(mode)} aria-pressed={view === mode} title={label} aria-label={label}
-      className={cn('grid h-8 w-8 place-items-center rounded-lg transition', view === mode ? 'bg-ink-100 text-ink-900 dark:bg-white/10 dark:text-white' : 'text-ink-400 hover:text-ink-700')}
+      className={cn('grid h-7 w-8 place-items-center rounded-md transition', view === mode ? 'bg-ink-100 text-ink-900 dark:bg-white/10 dark:text-white' : 'text-ink-400 hover:text-ink-700')}
     ><Icon className="h-4 w-4" /></button>
   );
 
@@ -163,7 +171,7 @@ function DoctorsList() {
         description="Manage your doctors and see how many patients each one has."
         actions={(
           <>
-            <div className="hidden rounded-xl border border-ink-200/80 bg-white p-1 dark:border-white/10 dark:bg-ink-900 md:flex">
+            <div className="hidden rounded-lg border border-ink-200 bg-white p-0.5 dark:border-white/10 dark:bg-ink-900 md:flex">
               {viewButton('table', List, 'Table view')}
               {viewButton('grid', LayoutGrid, 'Grid view')}
             </div>
@@ -173,12 +181,24 @@ function DoctorsList() {
       />
 
       <div className="a-card overflow-hidden">
-        <FilterBar search={filters.q} onSearch={(q) => setFilters({ q })} placeholder="Search name, email, phone…" active={activeFilters} onReset={reset}>
-          <Select value={filters.specialization} onChange={(v) => setFilters({ specialization: v })} placeholder="All specializations" options={(options?.specializations || []).map((s) => [s, s])} className="lg:w-48" aria-label="Specialization" />
-          <Select value={filters.hospital} onChange={(v) => setFilters({ hospital: v })} placeholder="All hospitals" options={(options?.hospitals || []).map((h) => [h, h])} className="lg:w-48" aria-label="Hospital" />
-          <Select value={filters.status} onChange={(v) => setFilters({ status: v })} placeholder="Any status" options={[['active', 'Active'], ['inactive', 'Inactive']]} className="lg:w-36" aria-label="Status" />
+        <FilterBar
+          search={filters.q}
+          onSearch={(q) => setFilters({ q })}
+          placeholder="Search name, email, phone…"
+          sort={<Select value={filters.sort} onChange={(v) => setFilters({ sort: v })} options={DOCTOR_SORTS} icon={ArrowUpDown} aria-label="Sort" />}
+          chips={chips}
+          onReset={reset}
+        >
+          <FilterField label="Specialization">
+            <Select value={filters.specialization} onChange={(v) => setFilters({ specialization: v })} placeholder="All specializations" options={(options?.specializations || []).map((s) => [s, s])} icon={Stethoscope} aria-label="Specialization" />
+          </FilterField>
+          <FilterField label="Hospital">
+            <Select value={filters.hospital} onChange={(v) => setFilters({ hospital: v })} placeholder="All hospitals" options={(options?.hospitals || []).map((h) => [h, h])} icon={Building2} aria-label="Hospital" />
+          </FilterField>
+          <FilterField label="Status">
+            <Select value={filters.status} onChange={(v) => setFilters({ status: v })} placeholder="Any status" options={STATUS_OPTIONS} icon={Activity} aria-label="Status" />
+          </FilterField>
           <DateRange from={filters.from} to={filters.to} onChange={setFilters} label="Joined" />
-          <Select value={filters.sort} onChange={(v) => setFilters({ sort: v })} options={DOCTOR_SORTS} className="lg:ml-auto lg:w-40" aria-label="Sort" />
         </FilterBar>
 
         {error && <p className="p-4 text-sm text-rose-600">{error.message}</p>}

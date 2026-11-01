@@ -7,9 +7,6 @@ node_modules/
 .env.*.local
 !.env.example
 
-# Uploaded files (keep the folder via .gitkeep)
-uploads/*
-!uploads/.gitkeep
 
 # Build output
 dist/

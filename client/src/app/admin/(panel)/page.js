@@ -52,12 +52,10 @@ function VisitsHero({ data, range }) {
   const trend = data?.trend || [];
   const max = Math.max(...trend.map((p) => p.patients), 1);
   return (
-    <div className="relative overflow-hidden rounded-[20px] bg-gradient-to-br from-brand-500 via-brand-600 to-brand-800 p-6 text-white shadow-brand-glow sm:col-span-2">
-      <div className="bg-dots pointer-events-none absolute inset-0" />
-      <div className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-white/20 blur-3xl" />
+    <div className="relative overflow-hidden rounded-2xl bg-brand-600 p-6 text-white sm:col-span-2">
       <div className="relative flex h-full flex-col">
-        <p className="text-sm font-medium text-white/60">Patient visits · {RANGE_TEXT[range]}</p>
-        {t ? <p className="mt-3 font-heading text-5xl font-bold leading-none tracking-tight">{formatNumber(t.newPatients)}</p> : <div className="mt-3 h-12 w-32 animate-pulse rounded-lg bg-white/10" />}
+        <p className="text-sm font-medium text-white/70">Patient visits · {RANGE_TEXT[range]}</p>
+        {t ? <p className="mt-3 text-5xl font-semibold leading-none tracking-tight">{formatNumber(t.newPatients)}</p> : <div className="mt-3 h-12 w-32 animate-pulse rounded-lg bg-white/10" />}
         <div className="mt-3 text-xs">{t && <Growth value={t.patientGrowth} light />}</div>
         <div className="mt-auto flex h-16 items-end gap-[3px] pt-6" aria-hidden="true">
           {trend.map((p) => (
@@ -104,10 +102,10 @@ function Dashboard() {
         title={`${greeting()}, ${user.name.split(' ')[0]}`}
         description={`Here’s what’s happening in your clinic — ${RANGE_TEXT[range.value]}.`}
         actions={(
-          <div className="inline-flex rounded-xl border border-ink-200/80 bg-white p-1 shadow-sm dark:border-white/10 dark:bg-ink-900" role="tablist" aria-label="Date range">
+          <div className="inline-flex rounded-lg bg-ink-100 p-0.5 dark:bg-white/5" role="tablist" aria-label="Date range">
             {RANGES.map(([value, label]) => (
               <button key={value} type="button" role="tab" aria-selected={range.value === value} onClick={() => range.set(value)}
-                className={cn('rounded-lg px-3 py-1.5 text-sm font-semibold transition', range.value === value ? 'bg-brand-600 text-white shadow-sm' : 'text-ink-500 hover:text-ink-900 dark:hover:text-white')}
+                className={cn('rounded-md px-3 py-1.5 text-sm font-medium transition', range.value === value ? 'bg-white text-ink-950 shadow-sm dark:bg-ink-800 dark:text-white' : 'text-ink-500 hover:text-ink-900 dark:hover:text-white')}
               >{label}</button>
             ))}
           </div>

@@ -12,4 +12,4 @@ export const GENDERS = { male: 'Male', female: 'Female', other: 'Other' };
 export const DOCTOR_SORTS = [['newest', 'Newest first'], ['oldest', 'Oldest first'], ['name', 'Name A–Z']];
 export const PATIENT_SORTS = [['newest', 'Latest visit'], ['oldest', 'Oldest visit'], ['name', 'Name A–Z'], ['age', 'Age (oldest)']];
 
-export const ROLE_LABELS = { admin: 'Administrator', manager: 'Clinic manager', editor: 'Website editor' };
+export const ROLE_LABELS = { admin: 'Administrator' };

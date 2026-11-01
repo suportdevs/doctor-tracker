@@ -36,7 +36,7 @@ export const Pagination = memo(function Pagination({ meta, onPage, onLimit }) {
           ? <span key={`gap-${i}`} className="px-1 text-ink-400">…</span>
           : (
             <button key={p} type="button" onClick={() => onPage(p)} aria-current={p === page ? 'page' : undefined}
-              className={cn('h-8 min-w-8 rounded-lg px-2 text-sm font-semibold transition', p === page ? 'bg-brand-600 text-white' : 'text-ink-600 hover:bg-ink-100 dark:text-ink-300 dark:hover:bg-white/5')}
+              className={cn('h-8 min-w-8 rounded-lg px-2 text-sm font-medium transition', p === page ? 'bg-ink-900 text-white dark:bg-white dark:text-ink-900' : 'text-ink-600 hover:bg-ink-100 dark:text-ink-300 dark:hover:bg-white/5')}
             >{p}</button>
           )))}
         <button type="button" className="a-btn-ghost a-btn-icon h-8 w-8" disabled={page >= pages} onClick={() => onPage(page + 1)} aria-label="Next page"><ChevronRight className="h-4 w-4" /></button>

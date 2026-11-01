@@ -7,7 +7,7 @@ const doctorSchema = new mongoose.Schema(
     hospital: { type: String, required: true, trim: true },
     phone: { type: String, required: true, trim: true },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
-    // Optional photo URL (a site image like /images/doctors/x.jpg or an upload from the media library).
+    // Optional photo URL (a site image like /images/doctors/x.jpg or a full https URL).
     photo: { type: String, trim: true, default: '' },
     status: { type: String, enum: ['active', 'inactive'], default: 'active' },
     // The date the doctor joined — used by the date filter and dashboard (seed data spreads it over a year).

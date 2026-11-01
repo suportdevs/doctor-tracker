@@ -1,4 +1,3 @@
-const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -15,10 +14,8 @@ app.set('trust proxy', 1);
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 app.use(cors({ origin: config.clientUrls }));
 app.use(compression());
-app.use(express.json({ limit: '2mb' }));
+app.use(express.json({ limit: '100kb' }));
 if (config.env !== 'test') app.use(morgan(config.env === 'production' ? 'tiny' : 'dev'));
-
-app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads'), { maxAge: '30d' }));
 
 app.use('/api', routes);
 app.use('/api', notFound);

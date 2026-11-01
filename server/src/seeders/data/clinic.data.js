@@ -27,8 +27,7 @@ const HOSPITALS = {
   north: 'Northside Children’s Hospital',
 };
 
-// [name, specialization, hospital key, status]. The first 15 are the senior team: they joined
-// earliest, so the website's "Meet our doctors" section (oldest first) shows them.
+// [name, specialization, hospital key, status]. The first 15 are the senior team: they joined earliest.
 const TEAM = [
   ['Sarah Mitchell', 'Cardiology', 'city'],
   ['Arjun Mehta', 'Neurology', 'stmary'],

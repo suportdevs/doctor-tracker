@@ -5,7 +5,7 @@ export { Card } from './Card';
 export { Badge, ConditionBadge } from './Badge';
 export { Avatar } from './Avatar';
 export { Field } from './Field';
-export { Toggle } from './Toggle';
+export { Input } from './Input';
 export { SearchInput } from './SearchInput';
 export { Select } from './Select';
 export { Modal } from './Modal';

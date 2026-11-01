@@ -36,36 +36,28 @@ function DoctorDetail() {
         <ArrowLeft className="h-4 w-4" />All doctors
       </Link>
 
-      <div className="a-card mb-6 overflow-hidden">
-        <div className="relative h-28 overflow-hidden bg-gradient-to-r from-brand-500 via-brand-600 to-brand-800">
-          <div className="bg-dots absolute inset-0" />
-          <div className="absolute -right-10 -top-16 h-56 w-56 rounded-full bg-sky-300/30 blur-3xl" />
-          <div className="absolute left-1/3 top-6 h-32 w-32 rounded-full bg-white/20 blur-3xl" />
-        </div>
-        <div className="px-5 pb-5 sm:px-6">
-          {/* Only the photo overlaps the banner; the name starts below it. */}
-          <div className="flex flex-wrap items-start justify-between gap-4">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-5">
-              <Avatar name={doctor.name} src={doctor.photo} size={104} className="relative -mt-14 ring-4 ring-white dark:ring-ink-900" />
-              <div className="sm:pt-3">
-                <h1 className="font-heading text-[1.75rem] font-bold leading-tight tracking-tight text-ink-950 dark:text-white">{doctor.name}</h1>
-                <div className="mt-1 flex flex-wrap items-center gap-2">
-                  <Badge color="brand">{doctor.specialization}</Badge>
-                  <Badge color={doctor.status === 'active' ? 'green' : 'gray'} dot>{doctor.status === 'active' ? 'Active' : 'Inactive'}</Badge>
-                </div>
+      <div className="a-card mb-6">
+        <div className="flex flex-wrap items-center justify-between gap-4 p-5 sm:p-6">
+          <div className="flex items-center gap-4">
+            <Avatar name={doctor.name} src={doctor.photo} size={64} />
+            <div>
+              <h1 className="text-xl font-semibold tracking-tight text-ink-950 dark:text-white">{doctor.name}</h1>
+              <div className="mt-1.5 flex flex-wrap items-center gap-2">
+                <Badge color="brand">{doctor.specialization}</Badge>
+                <Badge color={doctor.status === 'active' ? 'green' : 'gray'} dot>{doctor.status === 'active' ? 'Active' : 'Inactive'}</Badge>
               </div>
             </div>
-            <button type="button" className="a-btn-secondary sm:mt-3" onClick={() => setEditing(true)}><Pencil className="h-4 w-4" />Edit doctor</button>
           </div>
-          <dl className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-            {facts.map(([Icon, label, value, href]) => (
-              <div key={label} className="rounded-2xl border border-ink-100 bg-ink-50/60 p-3.5 dark:border-white/5 dark:bg-white/[.03]">
-                <dt className="flex items-center gap-1.5 text-xs font-medium text-ink-400"><Icon className="h-3.5 w-3.5" />{label}</dt>
-                <dd className="mt-1 truncate text-sm font-semibold text-ink-800 dark:text-ink-100">{href ? <a href={href} className="hover:text-brand-700">{value}</a> : value}</dd>
-              </div>
-            ))}
-          </dl>
+          <button type="button" className="a-btn-secondary" onClick={() => setEditing(true)}><Pencil className="h-4 w-4" />Edit doctor</button>
         </div>
+        <dl className="grid border-t border-ink-100 dark:border-white/5 sm:grid-cols-2 lg:grid-cols-5">
+          {facts.map(([Icon, label, value, href]) => (
+            <div key={label} className="border-b border-ink-100 px-5 py-4 last:border-b-0 dark:border-white/5 sm:px-6 lg:border-b-0 lg:border-r lg:last:border-r-0">
+              <dt className="flex items-center gap-1.5 text-xs font-medium text-ink-400"><Icon className="h-3.5 w-3.5" />{label}</dt>
+              <dd className="mt-1 truncate text-sm font-medium text-ink-800 dark:text-ink-100">{href ? <a href={href} className="hover:text-brand-700">{value}</a> : value}</dd>
+            </div>
+          ))}
+        </dl>
       </div>
 
       {/* onChanged refreshes the patient count above after adding/removing a patient. */}

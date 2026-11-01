@@ -6,7 +6,7 @@ COPY package*.json ./
 RUN npm install --omit=dev && npm cache clean --force
 
 COPY src ./src
-RUN mkdir -p uploads && chown -R node:node /app
+RUN chown -R node:node /app
 USER node
 
 EXPOSE 4000

@@ -13,7 +13,6 @@ async function authenticate(req, _res, next) {
     const token = header.startsWith('Bearer ') ? header.slice(7) : null;
     if (!token) throw new HttpError(401, 'Authentication required');
     const payload = jwt.verify(token, config.jwtSecret);
-    if (payload.purpose) throw new HttpError(401, 'Invalid session'); // e.g. a 2FA challenge token
     const user = await User.findById(payload.sub).lean();
     if (!user || !user.isActive) throw new HttpError(401, 'Account not found or disabled');
     // A password change/reset signs out sessions that started before it.

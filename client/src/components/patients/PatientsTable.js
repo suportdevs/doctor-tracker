@@ -3,13 +3,13 @@
 import { memo, useCallback, useState } from 'react';
 import Link from 'next/link';
 import { toast } from 'sonner';
-import { Pencil, Plus, Trash2, UserRound } from 'lucide-react';
+import { ArrowUpDown, Cake, HeartPulse, Pencil, Plus, Stethoscope, Trash2, UserRound, UsersRound } from 'lucide-react';
 import { api } from '@/services/api';
 import { CONDITIONS, GENDERS, PATIENT_SORTS } from '@/constants';
 import { useApi, useUrlFilters } from '@/hooks';
 import { cn, formatDate } from '@/lib/utils';
 import { useAuth } from '@/context/AuthContext';
-import FilterBar, { DateRange } from '@/components/common/FilterBar';
+import FilterBar, { DateRange, FilterField, dateRangeLabel } from '@/components/common/FilterBar';
 import PatientForm from './PatientForm';
 import { Avatar, ConditionBadge, ConfirmDialog, EmptyState, Pagination, Select, TableSkeleton } from '@/components/ui';
 
@@ -96,7 +96,17 @@ export default function PatientsTable({ doctorId, onChanged }) {
   const onEdit = useCallback((p) => setEditing(p), []);
   const onDelete = useCallback((p) => setDeleting(p), []);
   const ageValue = filters.minAge !== '' ? `${filters.minAge}-${filters.maxAge}` : '';
-  const activeFilters = ['q', 'condition', 'gender', 'doctor', 'from', 'to', 'minAge'].filter((k) => filters[k] !== '').length;
+  const doctorOptions = (doctors?.items || []).map((d) => [d._id, d.name]);
+
+  // One removable chip per active filter (the search box shows the search text itself).
+  const chips = [
+    filters.condition && { label: CONDITIONS[filters.condition]?.label || filters.condition, onRemove: () => setFilters({ condition: '' }) },
+    filters.gender && { label: GENDERS[filters.gender] || filters.gender, onRemove: () => setFilters({ gender: '' }) },
+    ageValue && { label: `Age ${AGE_GROUPS.find(([v]) => v === ageValue)?.[1] || ageValue}`, onRemove: () => setFilters({ minAge: '', maxAge: '' }) },
+    filters.doctor && { label: doctorOptions.find(([id]) => id === filters.doctor)?.[1] || 'Doctor', onRemove: () => setFilters({ doctor: '' }) },
+    (filters.from || filters.to) && { label: dateRangeLabel('Visit', filters.from, filters.to), onRemove: () => setFilters({ from: '', to: '' }) },
+  ].filter(Boolean);
+  const activeFilters = chips.length + (filters.q ? 1 : 0);
 
   const refresh = () => {
     mutate();
@@ -123,19 +133,33 @@ export default function PatientsTable({ doctorId, onChanged }) {
   return (
     <div className="a-card overflow-hidden">
       <div className="flex items-center justify-between gap-3 px-4 pt-4">
-        <h2 className="font-heading text-[17px] font-semibold tracking-tight text-ink-950 dark:text-white">{doctorId ? 'Patients of this doctor' : 'All patients'} {data && <span className="font-normal text-ink-400">({data.meta.total.toLocaleString()})</span>}</h2>
+        <h2 className="text-[15px] font-semibold text-ink-950 dark:text-white">{doctorId ? 'Patients of this doctor' : 'All patients'} {data && <span className="font-normal text-ink-400">({data.meta.total.toLocaleString()})</span>}</h2>
         <button type="button" className="a-btn-primary" onClick={() => setEditing({})}><Plus className="h-4 w-4" />Add patient</button>
       </div>
 
-      <FilterBar search={filters.q} onSearch={(q) => setFilters({ q })} placeholder="Search name, phone, diagnosis…" active={activeFilters} onReset={reset}>
-        <Select value={filters.condition} onChange={(v) => setFilters({ condition: v })} placeholder="All conditions" options={CONDITION_OPTIONS} className="lg:w-44" aria-label="Condition" />
-        <Select value={filters.gender} onChange={(v) => setFilters({ gender: v })} placeholder="Any gender" options={Object.entries(GENDERS)} className="lg:w-36" aria-label="Gender" />
-        <Select value={ageValue} onChange={(v) => { const [minAge = '', maxAge = ''] = v ? v.split('-') : []; setFilters({ minAge, maxAge }); }} placeholder="Any age" options={AGE_GROUPS} className="lg:w-32" aria-label="Age group" />
+      <FilterBar
+        search={filters.q}
+        onSearch={(q) => setFilters({ q })}
+        placeholder="Search name, phone, diagnosis…"
+        sort={<Select value={filters.sort} onChange={(v) => setFilters({ sort: v })} options={PATIENT_SORTS} icon={ArrowUpDown} aria-label="Sort" />}
+        chips={chips}
+        onReset={reset}
+      >
+        <FilterField label="Condition">
+          <Select value={filters.condition} onChange={(v) => setFilters({ condition: v })} placeholder="All conditions" options={CONDITION_OPTIONS} icon={HeartPulse} aria-label="Condition" />
+        </FilterField>
+        <FilterField label="Gender">
+          <Select value={filters.gender} onChange={(v) => setFilters({ gender: v })} placeholder="Any gender" options={Object.entries(GENDERS)} icon={UsersRound} aria-label="Gender" />
+        </FilterField>
+        <FilterField label="Age group">
+          <Select value={ageValue} onChange={(v) => { const [minAge = '', maxAge = ''] = v ? v.split('-') : []; setFilters({ minAge, maxAge }); }} placeholder="Any age" options={AGE_GROUPS} icon={Cake} aria-label="Age group" />
+        </FilterField>
         {showDoctor && (
-          <Select value={filters.doctor} onChange={(v) => setFilters({ doctor: v })} placeholder="All doctors" options={(doctors?.items || []).map((d) => [d._id, d.name])} className="lg:w-48" aria-label="Doctor" />
+          <FilterField label="Doctor">
+            <Select value={filters.doctor} onChange={(v) => setFilters({ doctor: v })} placeholder="All doctors" options={doctorOptions} icon={Stethoscope} aria-label="Doctor" />
+          </FilterField>
         )}
         <DateRange from={filters.from} to={filters.to} onChange={setFilters} label="Visit date" />
-        <Select value={filters.sort} onChange={(v) => setFilters({ sort: v })} options={PATIENT_SORTS} className="lg:ml-auto lg:w-40" aria-label="Sort" />
       </FilterBar>
 
       {error && <p className="p-4 text-sm text-rose-600">{error.message}</p>}

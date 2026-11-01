@@ -15,7 +15,7 @@ export function Avatar({ name, src, size = 36, className }) {
     );
   }
   return (
-    <span style={style} className={cn('grid shrink-0 place-items-center rounded-full bg-brand-100 font-heading font-bold text-brand-800 dark:bg-brand-500/15 dark:text-brand-200', className)}>
+    <span style={style} className={cn('grid shrink-0 place-items-center rounded-full bg-brand-100 font-semibold text-brand-800 dark:bg-brand-500/15 dark:text-brand-200', className)}>
       {initials(name)}
     </span>
   );

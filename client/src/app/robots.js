@@ -1,8 +1,4 @@
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
-
+// Private admin app: keep it out of search engines.
 export default function robots() {
-  return {
-    rules: { userAgent: '*', allow: '/', disallow: ['/admin', '/api'] },
-    sitemap: `${SITE_URL}/sitemap.xml`,
-  };
+  return { rules: { userAgent: '*', disallow: '/' } };
 }
